@@ -33,9 +33,9 @@ struct vegetarian_menu {
 
 struct Cafeteria {
     char *month_name;
-    struct normal_menu *normal;
-    struct vegan_menu *vegan;
-    struct vegetarian_menu *vegetarian;
+    struct normal_menu normal[100];
+    struct vegan_menu vegan[100];
+    struct vegetarian_menu vegetarian[100];
 };
 
 void initialize_menus(struct Cafeteria *cafeteria, char *csv_file_name) {
@@ -74,7 +74,6 @@ void initialize_menus(struct Cafeteria *cafeteria, char *csv_file_name) {
     char line[256];
     int day_count = 0;
     while (fgets(line, sizeof(line), csv_file)) {
-        // Parse the line and extract the menu information
         char menu_type[10];
         char date[10];
         char soup[50];
@@ -83,10 +82,14 @@ void initialize_menus(struct Cafeteria *cafeteria, char *csv_file_name) {
         char extra[50];
         sscanf(line, "%[^,],%[^,],%[^,],%[^,],%[^,],%[^,\n]", menu_type, date, soup, main_dish, side_dish, extra);
 
+        //printf("%s",menu_type);
+        //printf("%s",date);
         // Allocate memory for the menu struct and initialize its attributes
-        if (strcmp(menu_type, "Normal") == 0) {
+        if (strcmp(menu_type, "\"Normal\"") == 0) {
 //            cafeteria->normal[day_count].date = malloc(strlen(date) + 1);
+
             strcpy(cafeteria->normal[day_count].date, date);
+            //printf("%s",cafeteria->normal[day_count].date);
 //            cafeteria->normal[day_count].soup = malloc(strlen(soup) + 1);
             strcpy(cafeteria->normal[day_count].soup, soup);
 //            cafeteria->normal[day_count].main_dish = malloc(strlen(main_dish) + 1);
@@ -98,9 +101,10 @@ void initialize_menus(struct Cafeteria *cafeteria, char *csv_file_name) {
             cafeteria->normal[day_count].sale_count[0] = 0;
             cafeteria->normal[day_count].sale_count[1] = 0;
             cafeteria->normal[day_count].sale_count[2] = 0;
-        } else if (strcmp(menu_type, "Vegan") == 0) {
+        } else if (strcmp(menu_type, "\"Vegan\"") == 0) {
 //            cafeteria->vegan[day_count].date = malloc(strlen(date) + 1);
             strcpy(cafeteria->vegan[day_count].date, date);
+            //printf("%s",cafeteria->vegan[day_count].date);
 //            cafeteria->vegan[day_count].soup = malloc(strlen(soup) + 1);
             strcpy(cafeteria->vegan[day_count].soup, soup);
 //            cafeteria->vegan[day_count].main_dish = malloc(strlen(main_dish) + 1);
@@ -112,9 +116,10 @@ void initialize_menus(struct Cafeteria *cafeteria, char *csv_file_name) {
             cafeteria->vegan[day_count].sale_count[0] = 0;
             cafeteria->vegan[day_count].sale_count[1] = 0;
             cafeteria->vegan[day_count].sale_count[2] = 0;
-        } else if (strcmp(menu_type, "Vegetarian") == 0) {
+        } else if (strcmp(menu_type, "\"Vegetarian\"") == 0) {
 //            cafeteria->vegetarian[day_count].date = malloc(strlen(date) + 1);
             strcpy(cafeteria->vegetarian[day_count].date, date);
+            //printf("%s",cafeteria->vegetarian[day_count].date);
 //            cafeteria->vegetarian[day_count].soup = malloc(strlen(soup) + 1);
             strcpy(cafeteria->vegetarian[day_count].soup, soup);
 //            cafeteria->vegetarian[day_count].main_dish = malloc(strlen(main_dish) + 1);
@@ -127,6 +132,9 @@ void initialize_menus(struct Cafeteria *cafeteria, char *csv_file_name) {
             cafeteria->vegetarian[day_count].sale_count[1] = 0;
             cafeteria->vegetarian[day_count].sale_count[2] = 0;
         }
+        day_count++;
+
+
 
         // Parse sale counts
 //        char *token = strtok(sale_counts, ",");
@@ -150,9 +158,10 @@ void calc_and_show_income(struct Cafeteria *cafeteria) {
 
 
 int main() {
-    char csv_file_name[80] = "cafeteria_march_menu.csv";
+    char csv_file_name[80] = "C:\\Users\\ozgur\\CLionProjects\\Cafeteria2\\cafeteria_march_menu.csv";
     // bi tane düzgün Cafetaria structure ı oluştur, onu yolla. Nasıl yapılıyor bilmiyom, böyle çalışmıyo
-    struct Cafeteria *c = NULL;
-    initialize_menus(c, csv_file_name);
+    struct Cafeteria *cafeteria = malloc(sizeof(struct Cafeteria));
+    initialize_menus(cafeteria, csv_file_name);
+
     return 0;
 }
