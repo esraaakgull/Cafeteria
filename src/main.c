@@ -1,3 +1,6 @@
+//ESRA AKGUL - 260201074
+//OZGURHAN POLAT - 260201035
+
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -39,6 +42,15 @@ struct Cafeteria {
     struct Vegetarian_menu *vegetarian;
 };
 
+// Prices
+const int STUDENT = 6;
+const int ACADEMIC_PERS = 16;
+const int ADMINISTRATIVE = 12;
+
+int day_count_normal = 0;
+int day_count_vegan = 0;
+int day_count_vegeterian = 0;
+
 // This function will read the CSV file and initialize the cafeteria structure with the menu data
 void initialize_menus(struct Cafeteria *cafeteria, char *csv_file_name) {
     //  finding month name
@@ -49,7 +61,6 @@ void initialize_menus(struct Cafeteria *cafeteria, char *csv_file_name) {
     strncpy(month_name, start, len); // copy the text between the underscores to the buffer
     month_name[len] = '\0'; // add a null terminator to the buffer
     cafeteria->month_name = month_name;
-//    printf("%s\n", cafeteria->month_name);
 
     // Opening the CSV file for reading
     FILE *csv_file = fopen(csv_file_name, "r");
@@ -60,10 +71,6 @@ void initialize_menus(struct Cafeteria *cafeteria, char *csv_file_name) {
 
     // Reading the menus from the CSV file line by line
     char line[256];
-    int day_count_normal = 0;
-    int day_count_vegan = 0;
-    int day_count_vegeterian = 0;
-
     while (fgets(line, sizeof(line), csv_file)) {
         char menu_type[10];
         char date[10];
@@ -72,10 +79,8 @@ void initialize_menus(struct Cafeteria *cafeteria, char *csv_file_name) {
         char side_dish[50];
         char extra[50];
 
-//        printf("%s", line);
         // pulling data and assigning to variables line by line
         sscanf(line, "%[^,],%[^,],%[^,],%[^,],%[^,],%[^,\n]", menu_type, date, soup, main_dish, side_dish, extra);
-//        printf("%s , %s , %s , %s , %s , %s\n", menu_type, date, soup, main_dish, side_dish, extra);
 
         // Allocate memory for the menu struct and initialize its attributes
         if (strcmp(menu_type, "\"Normal\"") == 0) {
@@ -96,8 +101,7 @@ void initialize_menus(struct Cafeteria *cafeteria, char *csv_file_name) {
             cafeteria->normal[day_count_normal].sale_count[1] = 0;
             cafeteria->normal[day_count_normal].sale_count[2] = 0;
             day_count_normal++;
-        }
-        else if (strcmp(menu_type, "\"Vegan\"") == 0) {
+        } else if (strcmp(menu_type, "\"Vegan\"") == 0) {
             // reallocating the array size
             cafeteria->vegan = realloc(cafeteria->vegan, (day_count_vegan + 1) * sizeof(struct Vegan_menu));
             // assigning each value
@@ -136,20 +140,16 @@ void initialize_menus(struct Cafeteria *cafeteria, char *csv_file_name) {
             day_count_vegeterian++;
         }
     }
-
 }
 
 int randomNumGenerator(int lower, int upper) {
     return (rand() % (upper - lower + 1)) + lower;
 }
 
+// This function will generate random customer counts for each menu item and update the sale_count array accordingly
 void record_customer_counts(struct Cafeteria *cafeteria) {
-    // This function will generate random customer counts for each menu item and update the sale_count array accordingly
-    size_t num_elements = sizeof(cafeteria->normal) / sizeof(cafeteria->normal[0]);
-    printf("Number of elements in cafeteria->normal: %zu\n", num_elements);
-
-    for (int i = 0; i < 22; i++) {
-//        printf("%s\n",cafeteria->normal[i].date);
+    // for normal menu
+    for (int i = 0; i <= day_count_normal; i++) {
         int student_count = randomNumGenerator(0, 50);
         int academic_count = randomNumGenerator(0, 50);
         int administrative_count = randomNumGenerator(0, 50);
@@ -157,13 +157,164 @@ void record_customer_counts(struct Cafeteria *cafeteria) {
         cafeteria->normal[i].sale_count[0] = student_count;
         cafeteria->normal[i].sale_count[1] = academic_count;
         cafeteria->normal[i].sale_count[2] = administrative_count;
-
     }
 
+    // for vegan menu
+    for (int i = 0; i <= day_count_vegan; i++) {
+        int student_count = randomNumGenerator(0, 50);
+        int academic_count = randomNumGenerator(0, 50);
+        int administrative_count = randomNumGenerator(0, 50);
+
+        cafeteria->vegan[i].sale_count[0] = student_count;
+        cafeteria->vegan[i].sale_count[1] = academic_count;
+        cafeteria->vegan[i].sale_count[2] = administrative_count;
+    }
+
+    // for vegetarian menu
+    for (int i = 0; i <= day_count_vegeterian; i++) {
+        int student_count = randomNumGenerator(0, 50);
+        int academic_count = randomNumGenerator(0, 50);
+        int administrative_count = randomNumGenerator(0, 50);
+
+        cafeteria->vegetarian[i].sale_count[0] = student_count;
+        cafeteria->vegetarian[i].sale_count[1] = academic_count;
+        cafeteria->vegetarian[i].sale_count[2] = administrative_count;
+    }
 }
 
+// displaying first and last days of the month
+void display_first_last_of_month(struct Cafeteria *cafeteria) {
+    // Example output for Normal menu
+    printf("~ ~ ~ ~ Normal menu for the first and last days of the month:\n date--> %s\n soup--> %s\n main_dish--> %s\n side_dish--> %s\n ekstra--> %s\n ",
+           cafeteria->normal[0].date, cafeteria->normal[0].soup, cafeteria->normal[0].main_dish,
+           cafeteria->normal[0].side_dish, cafeteria->normal[0].extra);
+    printf("~ ~ ~ ~ Normal menu for the first and last days of the month:\n date--> %s\n soup--> %s\n main_dish--> %s\n side_dish--> %s\n ekstra--> %s\n\n",
+           cafeteria->normal[day_count_normal - 1].date, cafeteria->normal[day_count_normal - 1].soup,
+           cafeteria->normal[day_count_normal - 1].main_dish,
+           cafeteria->normal[day_count_normal - 1].side_dish, cafeteria->normal[day_count_normal - 1].extra);
+
+    // Example output for Vegan menu
+    printf("~ ~ ~ ~ Vegan menu for the first and last days of the month:\n date--> %s\n soup--> %s\n main_dish--> %s\n side_dish--> %s\n ekstra--> %s\n ",
+           cafeteria->vegan[0].date, cafeteria->vegan[0].soup, cafeteria->vegan[0].main_dish,
+           cafeteria->vegan[0].side_dish, cafeteria->vegan[0].extra);
+    printf("~ ~ ~ ~ Vegan menu for the first and last days of the month:\n date--> %s\n soup--> %s\n main_dish--> %s\n side_dish--> %s\n ekstra--> %s\n\n",
+           cafeteria->vegan[day_count_vegan - 1].date, cafeteria->vegan[day_count_vegan - 1].soup,
+           cafeteria->vegan[day_count_vegan - 1].main_dish,
+           cafeteria->vegan[day_count_vegan - 1].side_dish, cafeteria->vegan[day_count_vegan - 1].extra);
+
+    // Example output for Vegetarian menu
+    printf("~ ~ ~ ~ Vegetarian menu for the first and last days of the month:\n date--> %s\n soup--> %s\n main_dish--> %s\n side_dish--> %s\n ekstra--> %s\n ",
+           cafeteria->vegetarian[0].date, cafeteria->vegetarian[0].soup, cafeteria->vegetarian[0].main_dish,
+           cafeteria->vegetarian[0].side_dish, cafeteria->vegetarian[0].extra);
+    printf("~ ~ ~ ~ Vegetarian menu for the first and last days of the month:\n date--> %s\n soup--> %s\n main_dish--> %s\n side_dish--> %s\n ekstra--> %s\n\n",
+           cafeteria->vegetarian[day_count_vegeterian - 1].date, cafeteria->vegetarian[day_count_vegeterian - 1].soup,
+           cafeteria->vegetarian[day_count_vegeterian - 1].main_dish,
+           cafeteria->vegetarian[day_count_vegeterian - 1].side_dish,
+           cafeteria->vegetarian[day_count_vegeterian - 1].extra);
+
+    //  Example output for Normal menu
+    int day = randomNumGenerator(0, day_count_normal);
+    printf("Example output for normal menu ====> %s | %s | %s | %s | %s\n", cafeteria->normal[day].date,
+           cafeteria->normal[day].soup, cafeteria->normal[day].main_dish,
+           cafeteria->normal[day].side_dish, cafeteria->normal[day].extra);
+
+    //  Example output for Vegan menu
+    day = randomNumGenerator(0, day_count_vegan);
+    printf("Example output for vegan menu ====> %s | %s | %s | %s | %s\n", cafeteria->vegan[day].date,
+           cafeteria->vegan[day].soup, cafeteria->vegan[day].main_dish,
+           cafeteria->vegan[day].side_dish, cafeteria->vegan[day].extra);
+
+    //  Example output for Vegetarian menu
+    day = randomNumGenerator(0, day_count_vegeterian);
+    printf("Example output for vegetarian menu ====> %s | %s | %s | %s | %s\n\n", cafeteria->vegetarian[day].date,
+           cafeteria->vegetarian[day].soup, cafeteria->vegetarian[day].main_dish,
+           cafeteria->vegetarian[day].side_dish, cafeteria->vegetarian[day].extra);
+
+    // Example output for Normal menu
+    day = randomNumGenerator(0, day_count_normal);
+    printf("Counts for the example normal menu output of %s ====> Student:%d, Academic:%d, Administrative:%d\n",
+           cafeteria->normal[day].date, cafeteria->normal[day].sale_count[0], cafeteria->normal[day].sale_count[1],
+           cafeteria->normal[day].sale_count[2]);
+
+    // Example output for Vegan menu
+    day = randomNumGenerator(0, day_count_vegan);
+    printf("Counts for the example vegan menu output of %s ====> Student:%d, Academic:%d, Administrative:%d\n",
+           cafeteria->vegan[day].date, cafeteria->vegan[day].sale_count[0], cafeteria->vegan[day].sale_count[1],
+           cafeteria->vegan[day].sale_count[2]);
+
+    // Example output for Vegetarian menu
+    day = randomNumGenerator(0, day_count_vegan);
+    printf("Counts for the example vegetarian menu output of %s ====> Student:%d, Academic:%d, Administrative:%d\n",
+           cafeteria->vegetarian[day].date, cafeteria->vegetarian[day].sale_count[0],
+           cafeteria->vegetarian[day].sale_count[1],
+           cafeteria->vegetarian[day].sale_count[2]);
+}
+
+// This function will calculate the total income and show it in three different ways
 void calc_and_show_income(struct Cafeteria *cafeteria) {
-    // This function will calculate the total income and show it in three different ways
+    int gained_money_normal = 0;
+    int gained_money_normal_students = 0;
+    int gained_money_normal_academicpers = 0;
+    int gained_money_normal_administratives = 0;
+
+    for (int i = 0; i < day_count_normal; i++) {
+        gained_money_normal_students = gained_money_normal_students + cafeteria->normal[i].sale_count[0] * STUDENT;
+        gained_money_normal_academicpers =
+                gained_money_normal_academicpers + cafeteria->normal[i].sale_count[1] * ACADEMIC_PERS;
+        gained_money_normal_administratives =
+                gained_money_normal_administratives + cafeteria->normal[i].sale_count[2] * ADMINISTRATIVE;
+    }
+    gained_money_normal =
+            gained_money_normal_students + gained_money_normal_academicpers + gained_money_normal_administratives;
+
+    int gained_money_vegan = 0;
+    int gained_money_vegan_students = 0;
+    int gained_money_vegan_academicpers = 0;
+    int gained_money_vegan_administratives = 0;
+
+    for (int i = 0; i < day_count_vegeterian; i++) {
+        gained_money_vegan_students = gained_money_vegan_students + cafeteria->vegetarian[i].sale_count[0] * STUDENT;
+        gained_money_vegan_academicpers =
+                gained_money_vegan_academicpers + cafeteria->vegetarian[i].sale_count[1] * ACADEMIC_PERS;
+        gained_money_vegan_administratives =
+                gained_money_vegan_administratives + cafeteria->vegetarian[i].sale_count[2] * ADMINISTRATIVE;
+    }
+    gained_money_vegan =
+            gained_money_vegan_students + gained_money_vegan_academicpers + gained_money_vegan_administratives;
+
+    int gained_money_vegetarian = 0;
+    int gained_money_vegetarian_students = 0;
+    int gained_money_vegetarian_academicpers = 0;
+    int gained_money_vegetarian_administratives = 0;
+
+    for (int i = 0; i < day_count_vegan; i++) {
+        gained_money_vegetarian_students =
+                gained_money_vegetarian_students + cafeteria->vegan[i].sale_count[0] * STUDENT;
+        gained_money_vegetarian_academicpers =
+                gained_money_vegetarian_academicpers + cafeteria->vegan[i].sale_count[1] * ACADEMIC_PERS;
+        gained_money_vegetarian_administratives =
+                gained_money_vegetarian_administratives + cafeteria->vegan[i].sale_count[2] * ADMINISTRATIVE;
+    }
+    gained_money_vegetarian = gained_money_vegetarian_students + gained_money_vegetarian_academicpers +
+                              gained_money_vegetarian_administratives;
+
+    int total_gained_money = gained_money_normal + gained_money_vegan + gained_money_vegetarian;
+    int total_gained_money_students =
+            gained_money_normal_students + gained_money_vegan_students + gained_money_vegetarian_students;
+    int total_gained_money_academicpers =
+            gained_money_normal_academicpers + gained_money_vegan_academicpers + gained_money_vegetarian_academicpers;
+    int total_gained_money_administratives = gained_money_normal_administratives + gained_money_vegan_administratives +
+                                             gained_money_vegetarian_administratives;
+
+
+    display_first_last_of_month(cafeteria);
+
+    printf("\n************ The Sales Results ************\n");
+    printf("a. The distribution of the total gained money on the type of menus.\n Normal menu sales: %d TL,\n Vegan menu sales: %d TL,\n Vegetarian menu sales: %d TL.\n",
+           gained_money_normal, gained_money_vegan, gained_money_vegetarian);
+    printf("b. Overall sales for a month using the customer counts within each menu.\n Students sales: %d TL,\n Academic personal sales: %d TL,\n Administrative personal sales: %d TL.\n",
+           total_gained_money_students, total_gained_money_academicpers, total_gained_money_administratives);
+    printf("c. Total sales income of the whole month.\n Total sales income: %d TL.\n", total_gained_money);
 }
 
 
@@ -178,5 +329,6 @@ int main() {
     initialize_menus(cafeteria, csv_file_name);
     srand(time(0));
     record_customer_counts(cafeteria);
+    calc_and_show_income(cafeteria);
     return 0;
 }
