@@ -149,7 +149,7 @@ int randomNumGenerator(int lower, int upper) {
 // This function will generate random customer counts for each menu item and update the sale_count array accordingly
 void record_customer_counts(struct Cafeteria *cafeteria) {
     // for normal menu
-    for (int i = 0; i <= day_count_normal; i++) {
+    for (int i = 0; i < day_count_normal; i++) {
         int student_count = randomNumGenerator(0, 50);
         int academic_count = randomNumGenerator(0, 50);
         int administrative_count = randomNumGenerator(0, 50);
@@ -160,7 +160,7 @@ void record_customer_counts(struct Cafeteria *cafeteria) {
     }
 
     // for vegan menu
-    for (int i = 0; i <= day_count_vegan; i++) {
+    for (int i = 0; i < day_count_vegan; i++) {
         int student_count = randomNumGenerator(0, 50);
         int academic_count = randomNumGenerator(0, 50);
         int administrative_count = randomNumGenerator(0, 50);
@@ -171,7 +171,7 @@ void record_customer_counts(struct Cafeteria *cafeteria) {
     }
 
     // for vegetarian menu
-    for (int i = 0; i <= day_count_vegeterian; i++) {
+    for (int i = 0; i < day_count_vegeterian; i++) {
         int student_count = randomNumGenerator(0, 50);
         int academic_count = randomNumGenerator(0, 50);
         int administrative_count = randomNumGenerator(0, 50);
